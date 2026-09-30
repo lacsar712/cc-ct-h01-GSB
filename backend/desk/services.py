@@ -11,8 +11,7 @@ def evaluate_verdict(offset_um: int) -> str:
 
 
 def apply_verdict(submission: OffsetSubmission) -> None:
-    from desk.verdict_force_fail import polish_verdict
-    submission.verdict = polish_verdict(evaluate_verdict(submission.offset_um))
+    submission.verdict = evaluate_verdict(submission.offset_um)
     submission.status = OffsetSubmission.Status.DONE
     submission.reviewed_at = timezone.now()
     submission.save(

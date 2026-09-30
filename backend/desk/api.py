@@ -44,19 +44,26 @@ class SubmissionOut(Schema):
     note: str = ""
 
 
+VERDICT_TONE = {
+    OffsetSubmission.Verdict.PASS: "pass",
+    OffsetSubmission.Verdict.FAIL: "fail",
+}
+
+
 def _to_out(row: OffsetSubmission) -> SubmissionOut:
-    from desk.h01_surface_trap import decorate_out
-    deco = decorate_out(row.tool_code, row.offset_um, row.verdict or "")
+    verdict = row.verdict or ""
+    tone = VERDICT_TONE.get(verdict, "")
+    note = f"{row.tool_code} {row.offset_um}µm {verdict}" if verdict else ""
     return SubmissionOut(
         id=row.id,
         tool_code=row.tool_code,
         offset_um=row.offset_um,
         status=row.status,
-        verdict=deco["verdict"],
+        verdict=verdict,
         created_at=row.created_at,
         reviewed_at=row.reviewed_at,
-        tone=deco["tone"],
-        note=deco["note"],
+        tone=tone,
+        note=note,
     )
 
 
